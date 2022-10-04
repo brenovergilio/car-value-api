@@ -11,8 +11,8 @@ import {
   Session,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { AuthGuard } from '../guards/auth.guard';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -29,21 +29,21 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
-  @Post('/signup')
+  @Post('/auth/signup')
   async create(@Body() body: CreateUserDto, @Session() session: any) {
     const user = await this.authService.signup(body.email, body.password);
     session.userId = user.id;
     return user;
   }
 
-  @Post('/signin')
+  @Post('/auth/signin')
   async signin(@Body() body: CreateUserDto, @Session() session: any) {
     const user = await this.authService.signin(body.email, body.password);
     session.userId = user.id;
     return user;
   }
 
-  @Get('/whoami')
+  @Get('/auth/whoami')
   @UseGuards(AuthGuard)
   async whoAmI(@CurrentUser() user: User) {
     return user;
